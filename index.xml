@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Sat, 25 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>毕业一周年的一些想法</title><link>https://ingslh.com/post/2022-06-25-%E6%AF%95%E4%B8%9A%E4%B8%80%E5%91%A8%E5%B9%B4%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/</link><pubDate>Sat, 25 Jun 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-06-25-%E6%AF%95%E4%B8%9A%E4%B8%80%E5%91%A8%E5%B9%B4%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/</guid><description>&lt;p>距离去年毕业已经有一年的时间了，很早之前看过一句话，说&lt;em>人生痛苦的根源来自于受限与变迁&lt;/em>，但是对于我来说，至少学校与社会之间的环境切换给我的落差感并没有预想地那么强烈。关于这一年的生活状态想在这里做个自述，留作纪念。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Fri, 08 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>RSS：一种可能改善你个人信息流的技术方案</title><link>https://ingslh.com/post/2022-07-10-rss-%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%83%BD%E6%94%B9%E5%96%84%E4%BD%A0%E4%BF%A1%E6%81%AF%E6%B5%81%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88/</link><pubDate>Fri, 08 Jul 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-07-10-rss-%E4%B8%80%E7%A7%8D%E5%8F%AF%E8%83%BD%E6%94%B9%E5%96%84%E4%BD%A0%E4%BF%A1%E6%81%AF%E6%B5%81%E7%9A%84%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88/</guid><description>&lt;blockquote>
+&lt;p>&lt;em>这篇文章内容可能相对初阶，如果有描述不当的地方欢迎大家批评指正。&lt;/em>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="关于rss">关于RSS&lt;/h2>
+&lt;p>如今的互联网环境下大家都或多或少的遭遇过信息流“绑架”的问题：神秘的推荐算法黑盒让你被动地接收它以为你感兴趣的内容，在你的时间线上频繁地出现由平台插入的广告，以及在缺乏治理与监管的背景下，滋生而出的大量营销号与无意义的内容&amp;hellip;&lt;/p>
+&lt;p>在这种背景下，“让RSS复兴”的口号越来越频繁地出现在我们的视野里，大家似乎都寄希望于这项来自于20年前的技术手段，能够将用户从这种被信息平台所裹挟的情况中解救出来。&lt;/p>
+&lt;p>RSS（&lt;em>Really Simple Syndication或Rich Site Summary&lt;/em>）作为一种信息聚合的协议，用以生成网站提要（&lt;em>web feed&lt;/em>），帮助用户将离散的站点内容聚合起来，从而能够高效地浏览订阅站点新发布的内容&lt;/p>
+&lt;p>把时间倒退回web1.0与web2.0交叠的那个时代，在21世纪初，彼时的Facebook和twitter等个人内容发布平台还尚未出现，个人和机构的生产内容发布还是主要通过“博客（&lt;em>Blog&lt;/em>）”这种独立网站形式。为了满足当时人们每天需要阅读大量不同的网站，RSS这种信息聚合的协议就应运而生了。&lt;/p>
+&lt;p>在经过短短几年的迅速发展，在2002年已经更迭到了2.0的版本，在次年,作为RSS2.0的主要贡献者Dave Winer将RSS 2.0 规范的版权转让给了哈佛大学的Berkman Klein Center for Internet &amp;amp; Society,并与Brent Simmon和Jon Udell一起创建了RSS顾问委员会，用以维护和发布RSS协议规范，并且在2004年，由Stephen Horlander创建了曾经应用广泛，随处可见的rss图标。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0710/rss.png" alt="RSS">&lt;/p>
+&lt;p>在随后的几年发展里，网站提要的表现形式已经不仅仅局限通过RSS这种协议格式，当时（并且沿用至今）主流的协议格式包含&lt;/p>
+&lt;ul>
+&lt;li>RSS&lt;/li>
+&lt;li>Atom&lt;/li>
+&lt;li>JSON Feed&lt;/li>
+&lt;/ul>
+&lt;p>其中前两种是以xml作为数据格式，后一种是以json作为数据格式。而且由于RSS影响太过广泛，上述三种协议也被统称为RSS。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-xml" data-lang="xml">&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&amp;lt;?xml version=&amp;#34;1.0&amp;#34;?&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;rss&lt;/span> &lt;span class="na">xmlns:g=&lt;/span>&lt;span class="s">&amp;#34;http://base.google.com/ns/1.0&amp;#34;&lt;/span> &lt;span class="na">version=&lt;/span>&lt;span class="s">&amp;#34;2.0&amp;#34;&lt;/span>&lt;span class="nt">&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;channel&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;title&amp;gt;&lt;/span>示例 - Google 商店&lt;span class="nt">&amp;lt;/title&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;link&amp;gt;&lt;/span>https://store.google.com&lt;span class="nt">&amp;lt;/link&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;description&amp;gt;&lt;/span>这是一个基本 RSS 2.0 示例文档，其中包含一种商品&lt;span class="nt">&amp;lt;/description&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;g:id&amp;gt;&lt;/span>TV_123456&lt;span class="nt">&amp;lt;/g:id&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;g:title&amp;gt;&lt;/span>Google Chromecast（支持 Google TV）&lt;span class="nt">&amp;lt;/g:title&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;g:description&amp;gt;&lt;/span>Chromecast（支持 Google TV）最高支持 4K HDR 格式，为您带来喜爱的娱乐内容&lt;span class="nt">&amp;lt;/g:description&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;g:link&amp;gt;&lt;/span>https://store.google.com/product/chromecast_google_tv&lt;span class="nt">&amp;lt;/g:link&amp;gt;&lt;/span> &lt;span class="nt">&amp;lt;g:image_link&amp;gt;&lt;/span>https://images.example.com/TV_123456.png&lt;span class="nt">&amp;lt;/g:image_link&amp;gt;&lt;/span> &lt;span class="nt">&amp;lt;g:condition&amp;gt;&lt;/span>new&lt;span class="nt">&amp;lt;/g:condition&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;lt;g:availability&amp;gt;&lt;/span>in_stock&lt;span class="nt">&amp;lt;/g:availability&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/item&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/channel&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nt">&amp;lt;/rss&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>上面一个标准的RSS（feed）数据格式，用户只需要获取这个feed的订阅地址（一般是点击页面上的RSS图标），将它导入到自己的RSS阅读器中，就可以获取到这个网站后续内容更新。当用户把多个站点的RSS订阅后，就无需通过浏览器去切换网址，直接可以在RSS阅读器上获取多个网站的内容。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0710/Rss_reader.png" alt="RSS阅读器">&lt;/p>
+&lt;h2 id="rss的瓶颈">RSS的瓶颈&lt;/h2>
+&lt;p>也许人们习惯对过往的时代唱挽歌，但是如果真的把传统的RSS技术放到今天，它会再一次风靡起来吗？我认为是&lt;strong>不会的&lt;/strong>，主要原因有两个方面：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>RSS协议当初的设计并不能兼顾好当下的网络环境：因为无法支持效果酷炫前端页面，仅能作为静态网站的内容提要；而且如果你所订阅网站，在某一次更新中更新了大量的文章，生成的rss并不会包含全部的内容。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>互联网巨头们不再支持RSS订阅：随着google在2013年宣布放弃对RSS的支持，各大互联公司都希望把用户留在自己的站点上，像Facebook、twitter等社交网站也都不支持RSS订阅制，使用它们自己开放出来的api获取平台的内容所受到的限制也越来越大。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>所幸的是，还是有一群聪明勤劳的开发者不满足于这种情况，开发了多种多样的RSS订阅服务，通过部署在服务器，自动对用户订阅的目标进行抓取，再将结果返回给客户端（即rss阅读器），在这里我推荐一下&lt;a href="https://docs.rsshub.app/blog.html">RSSHub&lt;/a>和&lt;a href="https://github.com/HenryQW/Awesome-TTRSS">Tiny Tiny RSS&lt;/a>&lt;/p>
+&lt;p>其中RssHub的口号是&lt;/p>
+&lt;p>但是也不得不说，自建服务器的这种方式对于初阶用户来说，实在称不上是一种好的解决方案。&lt;/p>
+&lt;p>其实主要的矛盾点还是在第二个方面，因为已经不单纯是技术问题，而是一种关于利益分配的制度问题。&lt;/p>
+&lt;p>如果说RSS被创造出来的时期是在web1.0和web2.0之间过渡的时期，那么现如今也恰好处于web2.0到web3.0交叠的时期。3.0的核心理念是去中心化，将被创造出来的内容的所有权归还给用户，而不再是平台的所有物。RSS技术能否在这场技术变革中实现自身的升级，还是一个未知数，但从我个人出发，我对此的发展是持一种乐观的态度的。&lt;/p></description></item><item><title>毕业一周年的一些想法</title><link>https://ingslh.com/post/2022-06-25-%E6%AF%95%E4%B8%9A%E4%B8%80%E5%91%A8%E5%B9%B4%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/</link><pubDate>Sat, 25 Jun 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-06-25-%E6%AF%95%E4%B8%9A%E4%B8%80%E5%91%A8%E5%B9%B4%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/</guid><description>&lt;p>距离去年毕业已经有一年的时间了，很早之前看过一句话，说&lt;em>人生痛苦的根源来自于受限与变迁&lt;/em>，但是对于我来说，至少学校与社会之间的环境切换给我的落差感并没有预想地那么强烈。关于这一年的生活状态想在这里做个自述，留作纪念。&lt;/p>
 &lt;h2 id="关于工作">关于工作&lt;/h2>
 &lt;p>在离开呆了七年的校园之后，来到了&lt;a href="https://www.wondershare.net">万兴&lt;/a>，成为了一名打工人，参与到了一款视频编辑工具的开发中，并且整整做了一年。这一年的时间对于我技术能力的提升是巨大的，在头几个月的时间里真的是每天都有收获。放一张我的profile :)&lt;/p>
 &lt;p>&lt;img src="https://ingslh.com/img/0625/profile.png" alt="profile">&lt;/p>
