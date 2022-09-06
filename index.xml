@@ -107,7 +107,7 @@
 &lt;p>为了向指令缓存中写指令，需要使用Command Encoder来处理编码时的特定指令。此示例创建一个计算命令编码器，该编码器对计算通道进行编码。 计算通道包含执行计算管道的命令列表。 每个计算命令都会使 GPU 创建一个线程网格以在 GPU 上执行。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">id&lt;/span>&lt;span class="p">&amp;lt;&lt;/span>&lt;span class="n">MTLComputeCommandEncoder&lt;/span>&lt;span class="p">&amp;gt;&lt;/span> &lt;span class="n">computeEncoder&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="p">[&lt;/span>&lt;span class="n">commandBuffer&lt;/span> &lt;span class="n">computeCommandEncoder&lt;/span>&lt;span class="p">];&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>要对指令进行编码，需要对编码器进行一系列方法的调用，其中主要为设置状态信息，如管道状态对象 (pipeline state object,PSO) 或要传递给管道的参数。 进行这些状态更改后，命令进行编码以执行pipline。编码器会将所有状态变化和命令参数写入命令缓冲区。&lt;/p>
-&lt;p>&lt;img src="https://ingslh.com/img/0904/command_encoder.png" alt="Command Encoder">&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0904/command_encoder.png" alt="指令编码器">&lt;/p>
 &lt;h2 id="设置管线状态和参数信息">设置管线状态和参数信息&lt;/h2>
 &lt;p>首先需要设置对应pipline的状态，即PSO，然后针对需要发送到add_arrays函数的每一个参数进行配置。对于此pipline，需要对三个buffer进行配置。 Metal 按照参数出现在示例2中的顺序自动为buffer参数分配索引，从 0 开始。您使用相同的索引提供参数。&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="n">computeEncoder&lt;/span> &lt;span class="n">setComputePipelineState&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">_mAddFunctionPSO&lt;/span>&lt;span class="p">];&lt;/span>
