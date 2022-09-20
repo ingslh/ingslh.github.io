@@ -1,5 +1,101 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Thu, 08 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Apple Metal文档（2）：使用Metal绘制视图内容</title><link>https://ingslh.com/post/2022-09-08-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-2/</link><pubDate>Thu, 08 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-08-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-2/</guid><description>&lt;blockquote>
-&lt;p>本文翻译自苹果Metal的官方文档：&lt;a href="hhttps://developer.apple.com/documentation/metal/using_metal_to_draw_a_view_s_contents">Using Metal to Draw a View’s Contents&lt;/a>，目的主要是为了加深自己的理解，如果哪里翻译有误，请大家指出，我会及时更正。欢迎转载，但禁止用于商业用途。谢谢！&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Sun, 18 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Apple Metal文档（3）：使用渲染管线渲染图形</title><link>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</link><pubDate>Sun, 18 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</guid><description>&lt;blockquote>
+&lt;p>本文翻译自苹果Metal的官方文档：&lt;a href="https://developer.apple.com/documentation/metal/using_a_render_pipeline_to_render_primitives">Using a Render Pipeline to Render Primitives&lt;/a>，目的主要是为了加深自己的理解，如果哪里翻译有误，请大家指出，我会及时更正。欢迎转载，但禁止用于商业用途。谢谢！&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="概述">概述&lt;/h2>
+&lt;p>这个例程向你展示了如何配置一个渲染管线，并作为渲染通道一部分去绘制一个简单的2D三角形到视图中。该示例为每个顶点提供了位置和颜色信息，渲染管道使用该数据渲染三角形，并为三角形顶点指定的颜色之间插入颜色值。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/vertex_img.png" alt="顶点数据">&lt;/p>
+&lt;p>Xcode 项目包含用于在 macOS、iOS 和 tvOS 上运行示例的方案。&lt;/p>
+&lt;h2 id="理解metal渲染管线">理解Metal渲染管线&lt;/h2>
+&lt;p>渲染管线（pipline）用于处理绘图指令，并将图元数据写到渲染通道的目标中去。一个渲染管线会有很多阶段，其中一些需要使用着色器进行编程，另一些具有固定或可配置的属性。这个例程聚焦于渲染管线的三个主要阶段：顶点阶段、光栅化阶段和片段阶段，其中顶点阶段和片段阶段是可编程的，因此需要使用Metal着色器语言（MSL），而在光栅化阶段是被固定的。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/pipline.png" alt="pipline">&lt;/p>
+&lt;p>渲染首先通过一个绘图命令开始，包含顶点数量，需要绘制什么样的图形。下面是例程中的绘图指令。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Draw the triangle.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">[&lt;/span>&lt;span class="n">renderEncoder&lt;/span> &lt;span class="n">drawPrimitives&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="n">MTLPrimitiveTypeTriangle&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">vertexStart&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">vertexCount&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="mi">3&lt;/span>&lt;span class="p">];&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>在顶点阶段会为每个顶点提供坐标信息，当顶点被处理完成，渲染管线会对图形进行光栅化处理，以确定渲染目标中的哪些像素位于图形的边界内。在片段阶段会确定这些像素的颜色值，并把它们写到渲染目标中。&lt;/p>
+&lt;p>在本示例的其余部分，将看到如何编写顶点和片段函数，如何创建渲染管道状态对象，最后，如何编码使用此管道的绘图命令。&lt;/p>
+&lt;h2 id="自定义渲染管线如何处理数据">自定义渲染管线如何处理数据&lt;/h2>
+&lt;p>顶点函数会对每个顶点生成数据，片段函数会为图形上的片段生成数据，我们可以自定义其工作过程。配置管道的各个阶段时要记住一个目标，这意味着您知道希望管道生成什么以及它如何生成这些结果。&lt;/p>
+&lt;p>决定将什么数据传入你的渲染管线以及什么样的数据会在后续阶段通过渲染管线。总体上有三点需要你做的：&lt;/p>
+&lt;ol>
+&lt;li>管道的输入，由您的应用程序提供并传递到顶点阶段。&lt;/li>
+&lt;li>顶点阶段的输出，传递到光栅化阶段。&lt;/li>
+&lt;li>片段阶段的输入，由您的应用程序提供或由光栅化阶段生成。&lt;/li>
+&lt;/ol>
+&lt;p>在本示例中，渲染管线的输入是顶点的位置坐标和颜色数据。输入坐标在自定义坐标空间中定义，以距视图中心的像素为单位。这些坐标需要转换为 Metal 的坐标系。&lt;/p>
+&lt;p>声明一个AAPLVertex结构体，使用 SIMD 矢量类型来保存位置和颜色数据。要共享一个关于结构在内存中的布局方式的定义，请在公共标头中声明结构并将其导入 Metal 着色器和应用程序。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">typedef&lt;/span> &lt;span class="kd">struct&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">vector_float2&lt;/span> &lt;span class="n">position&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">vector_float4&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span> &lt;span class="n">AAPLVertex&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>SIMD 类型在 Metal Shading Language 中很常见，您还应该使用 simd 库在您的应用程序中使用它们。SIMD 类型包含特定数据类型的多个通道，所以以vector_float（包含2个32位的float）格式声明坐标，颜色信息使用vector_float4进行存储，包含红、绿、蓝、透明度通道。&lt;/p>
+&lt;p>在应用程序中，输入数据使用常量数组指定：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">static&lt;/span> &lt;span class="n">const&lt;/span> &lt;span class="n">AAPLVertex&lt;/span> &lt;span class="n">triangleVertices&lt;/span>&lt;span class="p">[]&lt;/span> &lt;span class="p">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// 2D positions, RGBA colors&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="mi">250&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">250&lt;/span> &lt;span class="p">},&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">250&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">-&lt;/span>&lt;span class="mi">250&lt;/span> &lt;span class="p">},&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">{&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">250&lt;/span> &lt;span class="p">},&lt;/span> &lt;span class="p">{&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span> &lt;span class="p">}&lt;/span> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>顶点阶段为顶点生成数据，因此它需要提供颜色和变换后的位置。 然后使用 SIMD 类型声明包含位置和颜色值的 RasterizerData 结构体。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="kd">struct&lt;/span> &lt;span class="nc">RasterizerData&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// The [[position]] attribute of this member indicates that this value&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// is the clip space position of the vertex when this structure is&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// returned from the vertex function.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">float4&lt;/span> &lt;span class="n">position&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="n">position&lt;/span>&lt;span class="p">]];&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Since this member does not have a special attribute, the rasterizer&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// interpolates its value with the values of the other triangle vertices&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// and then passes the interpolated value to the fragment shader for each&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// fragment in the triangle.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">float4&lt;/span> &lt;span class="n">color&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">};&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>输出的位置信息（下面详细描述）必须定义为vector_float4。 颜色在输入数据结构中被声明。&lt;/p>
+&lt;p>需要告诉 Metal 光栅化数据中的哪个字段提供位置数据，因为 Metal 不会对结构中的字段强制执行任何特定的命名约定。 使用 [[position]] 属性限定符注释位置字段以声明此字段包含输出位置。&lt;/p>
+&lt;p>片段函数只是将光栅化阶段的数据传递到后面的阶段，因此它不需要任何额外的参数。&lt;/p>
+&lt;h2 id="声明顶点函数">声明顶点函数&lt;/h2>
+&lt;p>声明顶点函数，包括它的输入参数和它输出的数据。 就像使用 kernel 关键字声明计算函数一样，您使用 vertex 关键字声明顶点函数。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">vertex&lt;/span> &lt;span class="n">RasterizerData&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">vertexShader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">uint&lt;/span> &lt;span class="n">vertexID&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="n">vertex_id&lt;/span>&lt;span class="p">]],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">constant&lt;/span> &lt;span class="n">AAPLVertex&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">vertices&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="n">buffer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">AAPLVertexInputIndexVertices&lt;/span>&lt;span class="p">)]],&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">constant&lt;/span> &lt;span class="n">vector_uint2&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">viewportSizePointer&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="n">buffer&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">AAPLVertexInputIndexViewportSize&lt;/span>&lt;span class="p">)]])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>第一个参数 vertexID 使用 [[vertex_id]] 属性限定符，这是另一个 Metal 关键字。 当您执行渲染命令时，GPU 会多次调用您的顶点函数，为每个顶点生成一个唯一值。&lt;/p>
+&lt;p>第二个参数 vertices 是一个包含顶点数据的数组，使用之前定义的 AAPLVertex 结构。&lt;/p>
+&lt;p>要将位置转换为 Metal 的坐标，该函数需要绘制三角形的视口大小（以像素为单位），因此它存储在 viewportSizePointer 参数中。&lt;/p>
+&lt;p>第二个和第三个参数具有 [[buffer(n)]] 限定符。 默认情况下，Metal 会自动为每个参数分配参数表中的接收对象。 当您将 [[buffer(n)]] 限定符添加到缓冲区参数时，您会明确告诉 Metal 使用哪个接收对象。 显式声明可以更轻松地修改着色器，而无需更改应用程序代码。 在共享头文件中声明两个索引的常量。&lt;/p>
+&lt;p>这个函数会输出一个RasterizerData对象。&lt;/p>
+&lt;h2 id="编写顶点数据">编写顶点数据&lt;/h2>
+&lt;p>顶点函数必须包含输出结构体的两个字段，使用 vertexID 参数来索引顶点数组并读取顶点的输入数据。 此外，需要获取绘制图像视图的尺寸。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">float2&lt;/span> &lt;span class="n">pixelSpacePosition&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">vertices&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">vertexID&lt;/span>&lt;span class="p">].&lt;/span>&lt;span class="n">position&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">xy&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// Get the viewport size and cast to float.&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">vector_float2&lt;/span> &lt;span class="n">viewportSize&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">vector_float2&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">*&lt;/span>&lt;span class="n">viewportSizePointer&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>顶点函数必须提供空间坐标中的位置数据，这些坐标是使用四维齐次向量 (x,y,z,w) 指定的 3D 点。光栅化阶段获取输出位置并将 x、y 和 z 坐标除以 w，以在归一化设备坐标中生成 3D 点。 归一化设备坐标与视口大小无关。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/positions.png" alt="空间坐标">&lt;/p>
+&lt;p>归一化坐标使用左手坐标系（opengl为右手）并映射到视图上的坐标系；在此坐标系中裁切出一个框，包裹住需要绘制的图形，进而进行光栅化；裁切框的左下角位于x-y坐标系上，坐标为（-1.0，-1.0），右上角位于（1.0,1.0）。z轴的正值指向远离摄像机的方向（远离屏幕），z轴的可见范围为0.0～1.0之间。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/transform_coordinates.png" alt="变换坐标">&lt;/p>
+&lt;p>因为这是一个 2D 的应用程序，因此不需要齐次坐标，首先会将默认值写入输出坐标，其中 w 值设置为 1.0，其他坐标设置为 0.0。这意味着顶点坐标已经归一化在空间坐标中，同时顶点函数会在这个坐标空间之中，生成对应的（x，y）坐标。将输入位置除以视口大小的一半以生成标准化设备坐标。 由于此计算是使用 SIMD 类型执行的，因此可以使用一行代码同时划分两个通道。 执行除法并将结果放在输出位置的 x 和 y 通道中。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">out&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">position&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">vector_float4&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mf">0.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">0.0&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mf">1.0&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="n">out&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">position&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">xy&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">pixelSpacePosition&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">viewportSize&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="mf">2.0&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>最后将颜色信息赋值给输出的color字段：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">out&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">color&lt;/span> &lt;span class="p">=&lt;/span> &lt;span class="n">vertices&lt;/span>&lt;span class="p">[&lt;/span>&lt;span class="n">vertexID&lt;/span>&lt;span class="p">].&lt;/span>&lt;span class="n">color&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="编写片段函数">编写片段函数&lt;/h2>
+&lt;p>渲染目标的片段（fargment）是可通过着色器配置的，光栅化会确定渲染目标的哪些像素被图元覆盖。 只有像素中心在三角形内的片段才会被渲染。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/fragment.png" alt="片段渲染">&lt;/p>
+&lt;p>片段函数处理来自光栅器的单个位置的传入信息，并计算每个渲染目标的输出值。 这些片段值由渲染管线中的后续阶段处理，并最终被写入渲染目标。&lt;/p>
+&lt;p>片段可更改的原因是因为片段阶段之后的渲染管线可以配置为拒绝某些片段或更改写入渲染目标的内容。 在此示例中，片段阶段计算的所有值都按原样写入渲染目标。&lt;/p>
+&lt;p>此示例中的片段着色器接收参数与顶点着色器输出参数相同。使用 fragment 关键字声明片段函数。它只有一个参数，即顶点阶段提供的RasterizerData 结构体。添加 [[stage_in]] 属性限定符以指示此参数由光栅器生成。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="n">fragment&lt;/span> &lt;span class="n">float4&lt;/span> &lt;span class="n">fragmentShader&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">RasterizerData&lt;/span> &lt;span class="k">in&lt;/span> &lt;span class="p">[[&lt;/span>&lt;span class="n">stage_in&lt;/span>&lt;span class="p">]])&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>如果您的片段函数对应多个渲染目标，它必须为每个渲染目标声明一个结构体。 因为这个示例只有一个渲染目标，所以您直接指定一个浮点向量作为函数的输出。 此输出是要写入渲染目标的颜色。&lt;/p>
+&lt;p>光栅化阶段计算每个片段参数的值并使用它们调用片段函数。 光栅化阶段将其颜色参数计算为三角形顶点处颜色的混合。 片段离顶点越近，顶点颜色对最终颜色的影响就越大。&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/0918/fragment_color.png" alt="片段着色">&lt;/p>
+&lt;p>片段函数会返回插值颜色作为函数的输出。&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-swift" data-lang="swift">&lt;span class="line">&lt;span class="cl">&lt;span class="k">return&lt;/span> &lt;span class="k">in&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">color&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="创建渲染管线状态对象">创建渲染管线状态对象&lt;/h2></description></item><item><title>Apple Metal文档（2）：使用Metal绘制视图内容</title><link>https://ingslh.com/post/2022-09-08-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-2/</link><pubDate>Thu, 08 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-08-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-2/</guid><description>&lt;blockquote>
+&lt;p>本文翻译自苹果Metal的官方文档：&lt;a href="https://developer.apple.com/documentation/metal/using_metal_to_draw_a_view_s_contents">Using Metal to Draw a View’s Contents&lt;/a>，目的主要是为了加深自己的理解，如果哪里翻译有误，请大家指出，我会及时更正。欢迎转载，但禁止用于商业用途。谢谢！&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="概述">概述&lt;/h2>
 &lt;p>在本示例中，将学习使用 Metal 渲染图形内容的基础知识。 将使用 MetalKit 框架创建一个用于Metal绘制图形的视图。 然后，将编写代码完成擦除视图内容为一个固定的背景颜色的操作。&lt;/p>
