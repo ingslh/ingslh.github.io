@@ -1,4 +1,35 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Sun, 18 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>Apple Metal文档（3）：使用渲染管线渲染图形</title><link>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</link><pubDate>Sun, 18 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</guid><description>&lt;blockquote>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Ingslh's Blog</title><link>https://ingslh.com/</link><description>Recent content on Ingslh's Blog</description><generator>Hugo -- gohugo.io</generator><managingEditor>ingslh@foxmail.com (ingslh)</managingEditor><webMaster>ingslh@foxmail.com (ingslh)</webMaster><lastBuildDate>Sat, 25 Feb 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://ingslh.com/index.xml" rel="self" type="application/rss+xml"/><item><title>R2grap项目介绍(1):总述与结构篇</title><link>https://ingslh.com/post/2023-02-25-r2grap%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D1%E8%AE%BE%E8%AE%A1%E7%AF%87/</link><pubDate>Sat, 25 Feb 2023 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2023-02-25-r2grap%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D1%E8%AE%BE%E8%AE%A1%E7%AF%87/</guid><description>&lt;blockquote>
+&lt;p>本专题主要介绍个人开源项目&lt;a href="https://github.com/ingslh/R2grap-gl">R2grap&lt;/a>的设计思路、实现方式，算是对自己之前所做的工作的进行一个简单的总结，该项目还有很多待优化项，后续如果有时间的话，我会持续进行优化。&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="why-to-do-this">Why to do this&lt;/h2>
+&lt;p>因为在工作中需要针对一些从AE（Adobe After Effect）导出的特效素材颗粒进行转译，但其中的动画效果基本是使用视频底作为实际的输出结果，这样的处理方式会造成后续对动画效果修改时，需要重新在AE中修改并再走一次导出、编码的流程，无法满足在客户端对资源颗粒进行二次修改的要求。&lt;/p>
+&lt;p>加之受Lottie与Pag对于特效资源颗粒处理流程的启发，打算自己动手写一套从AE导出动画的描述信息，并加以解析，最终使用图形API在各平台上实现的动画生产解决方案。&lt;/p>
+&lt;p>受限于时间与精力的原因，目前仅支持了AE中的Shape类型动画，后续有时间的话会加以完善。&lt;/p>
+&lt;h2 id="r2grap项目结构与运行">R2grap项目结构与运行&lt;/h2>
+&lt;p>该项目的目录结构主要为以下形式：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">R2grap-gl
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___assets //从AE中已导出的Json文件，用于测试；
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___doc
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___include
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___lib
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___script //从AE导出Json文件时，需要执行的AE脚本文件
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___base //一些基础操作流程包括，贝塞尔插值，多边形建模
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___codec //解析Json文件，以layer-path为单位完成动画信息的构建；
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___render //主要用于生成渲染信息的相关实现，渲染信息包含（verts/paths， colors/texture，transform/keyframe）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___shader //主要为GLSL、HLSL的shader文件
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___metal //使用Metal渲染的相关接口实现
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___directx //使用DirectX渲染的相关接口实现
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> |___opengl //使用OpenGl渲染的相关接口实现
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ｜___CMakeLists.txt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>clone完成该项目后，进入R2grap-gl可以直接使用内置好的json，编译后进行渲染预览；&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-shell" data-lang="shell">&lt;span class="line">&lt;span class="cl">mkdir build
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">cmake ..
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">make
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">./R2grap-gl //如果需要更改渲染的json文件，可以加上的json文件名，例如：./R2grap-gl thinking.json
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>就可以看到使用OPenGL的渲染效果啦；&lt;/p>
+&lt;p>&lt;img src="https://ingslh.com/img/2023-02-25/thinking.gif" alt="test">&lt;/p>
+&lt;p>后续会继续说明下关于动画信息的构建，以及调用图形API完成渲染。&lt;/p></description></item><item><title>Apple Metal文档（3）：使用渲染管线渲染图形</title><link>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</link><pubDate>Sun, 18 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</guid><description>&lt;blockquote>
 &lt;p>本文翻译自苹果Metal的官方文档：&lt;a href="https://developer.apple.com/documentation/metal/using_a_render_pipeline_to_render_primitives">Using a Render Pipeline to Render Primitives&lt;/a>，目的主要是为了加深自己的理解，如果哪里翻译有误，请大家指出，我会及时更正。欢迎转载，但禁止用于商业用途。谢谢！&lt;/p>
 &lt;/blockquote>
 &lt;h2 id="概述">概述&lt;/h2>
