@@ -29,6 +29,8 @@
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">./R2grap-gl //如果需要更改渲染的json文件，可以加上的json文件名，例如：./R2grap-gl thinking.json
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>就可以看到使用OPenGL的渲染效果啦；&lt;/p>
 &lt;p>&lt;img src="https://ingslh.com/img/2023-02-25/thinking.gif" alt="test">&lt;/p>
+&lt;h2 id="从ae中导出动画json">从AE中导出动画Json&lt;/h2>
+&lt;p>目前支持AE 2020及后续版本，可通过文件-&amp;gt;脚本-&amp;gt;运行/安装脚本，会在assets的目录下生成相应的Json文件。&lt;/p>
 &lt;p>后续会继续说明下关于动画信息的构建，以及调用图形API完成渲染。&lt;/p></description></item><item><title>Apple Metal文档（3）：使用渲染管线渲染图形</title><link>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</link><pubDate>Sun, 18 Sep 2022 00:00:00 +0000</pubDate><author>ingslh@foxmail.com (ingslh)</author><guid>https://ingslh.com/post/2022-09-18-applemetal%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E4%B8%AD%E6%96%87-3/</guid><description>&lt;blockquote>
 &lt;p>本文翻译自苹果Metal的官方文档：&lt;a href="https://developer.apple.com/documentation/metal/using_a_render_pipeline_to_render_primitives">Using a Render Pipeline to Render Primitives&lt;/a>，目的主要是为了加深自己的理解，如果哪里翻译有误，请大家指出，我会及时更正。欢迎转载，但禁止用于商业用途。谢谢！&lt;/p>
 &lt;/blockquote>
